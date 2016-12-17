@@ -5,11 +5,11 @@
   "description": "Pre-logon secretin integration",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint src/",
-    "start": "npm run build && electron main.js",
-    "build": "npm run lint && NODE_PATH=./src react-scripts build"
+    "start": "npm run build && cp robotjsLibs/robotjs_1.4.12_abi50_linux_x64.node node_modules/robotjs/build/Release/robotjs.node && electron main.js",
+    "build": "npm run lint && NODE_PATH=./src react-scripts build",
+    "deploy": "npm run build && cp robotjsLibs/robotjs_1.4.12_abi50_win32_x64.node node_modules/robotjs/build/Release/robotjs.node && electron-packager ./ --platform=win32 --arch=x64 --version=1.4.12 --overwrite"
   },
   "repository": {
     "type": "git",
