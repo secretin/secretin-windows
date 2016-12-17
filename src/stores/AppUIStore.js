@@ -8,7 +8,8 @@ const AppUIState = new Record({
   loading: false,
   connected: false,
   errors: new Immutable.Map(),
-  currentUser: null,
+  windowsSecretId: 'undefined',
+  passwordsList: new Immutable.List(),
 });
 
 class AppUIStore {
@@ -26,13 +27,14 @@ class AppUIStore {
     );
   }
 
-  onLoginUserSuccess({ currentUser }) {
+  onLoginUserSuccess({ windowsSecretId, passwordsList }) {
     this.setState(
       this.state.merge({
         loading: false,
         connected: true,
         errors: new Immutable.Map(),
-        currentUser,
+        windowsSecretId,
+        passwordsList: new Immutable.List(passwordsList),
       }),
     );
   }
@@ -47,8 +49,12 @@ class AppUIStore {
     );
   }
 
-  static getCurrentUser() {
-    return this.getState().get('currentUser');
+  static getPasswordsList() {
+    return this.getState().get('passwordsList');
+  }
+
+  static getWindowsSecretId() {
+    return this.getState().get('windowsSecretId');
   }
 }
 

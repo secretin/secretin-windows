@@ -48,7 +48,7 @@ class UserConnect extends Component {
     return (
       <div className="user-connect">
         <h2>
-          Login
+          Secret-in.me
         </h2>
         <Form
           className="user-connect-form"

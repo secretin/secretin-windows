@@ -25,7 +25,15 @@ let fakeClipboard = '';
 function createWindow() {
   // Create the browser window.
   if (process.argv[2] === 'preLogon') {
-    win = new BrowserWindow({ width: 800, height: 600, frame: false });
+    win = new BrowserWindow({
+      width: 800,
+      height: 600,
+      frame: false,
+      transparent: true,
+      minimizable: false,
+      closable: false,
+      alwaysOnTop: true,
+    });
     win.setClosable(false);
 
     const shortcut = 'Ctrl+V';
@@ -42,7 +50,10 @@ function createWindow() {
       event.returnValue = true;
     });
   } else {
-    win = new BrowserWindow({ width: 800, height: 600 });
+    win = new BrowserWindow({
+      width: 800,
+      height: 600,
+    });
 
     ipcMain.on('changeClipboard', (event) => { // prevent freeze in non-preLogon mode
       event.returnValue = true;
