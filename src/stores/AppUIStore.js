@@ -49,6 +49,23 @@ class AppUIStore {
     );
   }
 
+  onGeneratePassword() {
+    this.setState(
+      this.state.merge({
+        loading: true,
+      }),
+    );
+  }
+
+  onGeneratePasswordSuccess({ passwordsList }) {
+    this.setState(
+      this.state.merge({
+        loading: false,
+        passwordsList,
+      }),
+    );
+  }
+
   static getPasswordsList() {
     return this.getState().get('passwordsList');
   }

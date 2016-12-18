@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import Immutable from 'immutable';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
-// import copyToClipboard from 'copy-to-clipboard';
 
 class Input extends Component {
   static propTypes = {
@@ -22,7 +21,6 @@ class Input extends Component {
 
     autoFocus: PropTypes.bool,
     autoSelect: PropTypes.bool,
-    showCopy: PropTypes.bool,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     actions: PropTypes.instanceOf(Immutable.List),
@@ -34,7 +32,6 @@ class Input extends Component {
     value: '',
     autoFocus: false,
     autoSelect: false,
-    showCopy: false,
     disabled: false,
     readOnly: false,
     actions: new Immutable.List(),
@@ -46,7 +43,6 @@ class Input extends Component {
 
     this.onChange = this.onChange.bind(this);
     this.onTogglePasswordShow = this.onTogglePasswordShow.bind(this);
-    this.onCopy = this.onCopy.bind(this);
     this.id = uniqueId('input_');
     this.state = {
       showPassword: false,
@@ -75,11 +71,6 @@ class Input extends Component {
     });
   }
 
-  onCopy() {
-    // copyToClipboard(this.props.value, { debug: true });
-    // ipcRenderer.sendSync('changeClipboard', this.props.value);
-  }
-
   render() {
     const className = classNames(
       'input',
@@ -99,18 +90,6 @@ class Input extends Component {
           tabIndex="-1"
         >
           {this.state.showPassword ? 'Hide' : 'Show'}
-        </a>,
-      );
-    }
-
-    if (this.props.showCopy) {
-      actions = actions.unshift(
-        <a
-          key="copy"
-          onClick={this.onCopy}
-          tabIndex="-1"
-        >
-          Copy
         </a>,
       );
     }

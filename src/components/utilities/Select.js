@@ -53,8 +53,8 @@ class Select extends Component {
         >
           {
             this.props.options.map(option =>
-              <option key={option[0]} value={option[0]}>
-                {option[1]}
+              <option key={`${option.value}${option.text}`} value={option.value}>
+                {option.text}
               </option>,
             )
           }

@@ -1,12 +1,16 @@
+import moment from 'moment';
 import Secretin from 'secretin';
 import alt from '../utils/alt';
 import secretin from '../utils/secretin';
+
 
 class AppUIActions {
   constructor() {
     this.generateActions(
       'loginUserSuccess',
       'loginUserFailure',
+      'generatePasswordSuccess',
+      'generatePasswordFailure',
     );
   }
 
@@ -42,6 +46,15 @@ class AppUIActions {
         throw error;
       });
     return { username };
+  }
+
+  generatePassword({ windowsSecretId, passwordsList }) {
+    const newPassword = Secretin.Utils.PasswordGenerator.generatePassword({ length: 30 });
+    const newPasswordsList = passwordsList.push({ date: moment().format('DD/MM/YY HH:mm'), value: newPassword });
+    secretin.editSecret(windowsSecretId, newPasswordsList.toJS())
+      .then(() => this.generatePasswordSuccess({ passwordsList: newPasswordsList }))
+      .catch(() => this.generatePasswordFailure());
+    return { windowsSecretId };
   }
 }
 

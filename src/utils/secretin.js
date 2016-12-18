@@ -1,5 +1,5 @@
 import Secretin from 'secretin';
 
-const secretin = new Secretin(Secretin.API.Server, 'http://api.secret-in.me:3000');
+const secretin = new Secretin(Secretin.API.Server, 'https://api.secret-in.me');
 
 export default secretin;

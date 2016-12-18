@@ -46,7 +46,6 @@ function createWindow() {
 
     ipcMain.on('changeClipboard', (event, arg) => {
       fakeClipboard = arg;
-      win.minimize();
       event.returnValue = true;
     });
   } else {
@@ -55,7 +54,8 @@ function createWindow() {
       height: 600,
     });
 
-    ipcMain.on('changeClipboard', (event) => { // prevent freeze in non-preLogon mode
+    ipcMain.on('changeClipboard', (event, arg) => { // prevent freeze in non-preLogon mode
+      console.log(arg);
       event.returnValue = true;
     });
   }
