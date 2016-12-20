@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Secretin from 'secretin';
+import Secretin, { Errors } from 'secretin';
 import alt from '../utils/alt';
 import secretin from '../utils/secretin';
 
@@ -14,10 +14,10 @@ class AppUIActions {
     );
   }
 
-  loginUser({ username, password }) {
+  loginUser({ username, password, token }) {
     let windowsSecretId = 'undefined';
     secretin
-      .loginUser(username, password)
+      .loginUser(username, password, token)
       .then((currentUser) => {
         Object.keys(currentUser.metadatas).forEach((id) => {
           if (currentUser.metadatas[id].type === 'windows') {
@@ -28,13 +28,22 @@ class AppUIActions {
       })
       .then(passwordsList => this.loginUserSuccess({ windowsSecretId, passwordsList }))
       .catch((error) => {
-        if (error instanceof Secretin.Errors.UserNotFoundError) {
+        if (error instanceof Errors.UserNotFoundError) {
           return this.loginUserFailure({
             error: { username: 'User not found' },
           });
-        } else if (error instanceof Secretin.Errors.InvalidPasswordError) {
+        } else if (error instanceof Errors.InvalidPasswordError) {
+          if (token) {
+            return this.loginUserFailure({
+              error: { totp: 'Token', token: 'Invalid token' },
+            });
+          }
           return this.loginUserFailure({
             error: { password: 'Invalid password' },
+          });
+        } else if (error instanceof Errors.NeedTOTPTokenError) {
+          return this.loginUserFailure({
+            error: { totp: 'Token' },
           });
         } else if (error instanceof Secretin.Errors.DontHaveSecretError) {
           return secretin.addSecret('Windows', [], 'windows')

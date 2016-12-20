@@ -50,6 +50,7 @@ function createWindow() {
     });
   } else {
     win = new BrowserWindow({
+      backgroundColor: '#68bdf6',
       width: 800,
       height: 600,
     });

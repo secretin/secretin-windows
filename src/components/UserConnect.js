@@ -35,6 +35,7 @@ class UserConnect extends Component {
     AppUIActions.loginUser({
       username: this.state.username,
       password: this.state.password,
+      token: this.state.token,
     });
   }
 
@@ -74,6 +75,21 @@ class UserConnect extends Component {
             disabled={this.props.loading}
             error={this.props.errors.get('password')}
           />
+          {
+            this.props.errors.get('totp') ?
+              <Input
+                name="token"
+                label="Token"
+                type="text"
+                value={this.state.token}
+                onChange={this.handleChange}
+                disabled={this.props.loading}
+                error={this.props.errors.get('token')}
+                autoFocus
+              />
+            :
+              <span />
+          }
 
           <Button
             type="submit"
