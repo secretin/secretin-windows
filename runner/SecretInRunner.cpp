@@ -12,10 +12,26 @@
 #include <WbemIdl.h>
 
 #define SVCNAME L"Secret-in.me"
+#define PROCNAME L"secretin-windows.exe"
 
 //DWORD Sessions = 0;
 HANDLE ghSvcStopEvent = NULL;
 BOOL shouldStop = FALSE;
+
+wchar_t* ReadRegistry(wchar_t* name) {
+	const wchar_t* registryKeyName = L"SOFTWARE\\Wow6432Node\\secretin";
+	DWORD pcbData;
+	RegGetValue(HKEY_LOCAL_MACHINE, registryKeyName,
+		name, RRF_RT_ANY, NULL, NULL, &pcbData);
+	wchar_t *pvData;
+	pvData = reinterpret_cast<wchar_t*>(malloc(pcbData));
+	if (pvData != NULL) {
+		RegGetValue(HKEY_LOCAL_MACHINE, registryKeyName,
+			name, RRF_RT_ANY, NULL, (PVOID)pvData, &pcbData);
+		if (*pvData != NULL)
+			return pvData;
+	}
+}
 
 void SvcReportEvent(LPTSTR szFunction) {
 	/*
@@ -73,7 +89,7 @@ bool terminateSecretin(DWORD oldSessionId) {
 	}
 
 	do {
-		if (wcsncmp(pe.szExeFile, L"secret-in.me.exe", 16) == NULL) {
+		if (wcsncmp(pe.szExeFile, PROCNAME, 16) == NULL) {
 			hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
 			if (hProcess == 0) {
 				SvcReportEvent(L"Terminate_OpenProcess");
@@ -173,12 +189,25 @@ bool runSecretin(DWORD newSessionId) {
 	si.dwFlags = STARTF_USESHOWWINDOW;
 	si.wShowWindow = SW_MINIMIZE;
 	si.lpDesktop = L"WinSta0\\WinLogon";
-	if (!CreateProcessAsUser(hDupToken, L"C:\\secret-in.me-win32-x64\\secret-in.me.exe", L"preLogon preLogon preLogon", NULL, NULL, FALSE, 0, NULL, L"C:\\secret-in.me-win32-x64\\", &si, &pi)) {
+
+	wchar_t* rPath;
+	rPath = ReadRegistry(L"path");
+
+	wchar_t* suffixe = PROCNAME;
+
+	int fullPathSize = wcslen(rPath) + wcslen(suffixe) + 1;
+	wchar_t* fullPath = reinterpret_cast<wchar_t*>(malloc((fullPathSize) * sizeof(wchar_t*)));
+	wcscpy_s(fullPath, fullPathSize, rPath);
+	wcscat_s(fullPath, fullPathSize, suffixe);
+
+	if (!CreateProcessAsUser(hDupToken, fullPath, L"preLogon preLogon preLogon", NULL, NULL, FALSE, 0, NULL, rPath, &si, &pi)) {
 		CloseHandle(hDupToken);
 		CloseHandle(hToken);
 		SvcReportEvent(L"CreateProcessAsUser");
 		return FALSE;
 	}
+	free(fullPath);
+	free(rPath);
 	CloseHandle(hDupToken);
 	CloseHandle(hToken);
 	//Sessions |= (2 << (sessionId-1));
