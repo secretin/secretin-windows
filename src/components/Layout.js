@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Immutable from 'immutable';
 import connectToStores from 'alt-utils/lib/connectToStores';
+import moment from 'moment';
 
 import Select from '../components/utilities/Select';
 import Button from '../components/utilities/Button';
@@ -73,41 +74,51 @@ class Layout extends Component {
 
   render() {
     return (
-      <div className="user-connect">
-        <h2>
-          Secret-in.me
+      <form className="user-connect form">
+        <h2 className="user-connect-title">
+          Windows
+          <small>
+            Passwords
+          </small>
         </h2>
+
         {
           this.state.windowsPassword ? (
-            <div>
-              <Select
-                value={this.state.windowsPassword}
-                options={
-                  this.props.passwordsList.reverse().map(password => ({
-                    text: password.date,
-                    value: password.value,
-                  }))
-                }
-                onChange={this.handleChange}
-              />
-              <a href="#copy" onClick={this.handleClick}>
-                Copy
-              </a>
-            </div>
+            <Select
+              label="Passwords"
+              value={this.state.windowsPassword}
+              options={
+                this.props.passwordsList.reverse().map(password => ([
+                  password.value,
+                  `${moment(password.date).format('dddd DD MMMM YYYY')}`,
+                ])).toList()
+              }
+              onChange={this.handleChange}
+              actions={
+                new Immutable.List([
+                  <a
+                    disabled={this.props.loading}
+                    onClick={() => AppUIActions.generatePassword({
+                      windowsSecretId: this.props.windowsSecretId,
+                      passwordsList: this.props.passwordsList,
+                    })}
+                  >
+                    Generate password
+                  </a>,
+                ])
+              }
+            />
           ) : (
             'Generate your first password'
           )
         }
         <Button
+          onClick={this.handleClick}
           disabled={this.props.loading}
-          onClick={() => AppUIActions.generatePassword({
-            windowsSecretId: this.props.windowsSecretId,
-            passwordsList: this.props.passwordsList,
-          })}
         >
-          Generate password
+          Copy
         </Button>
-      </div>
+      </form>
     );
   }
 }

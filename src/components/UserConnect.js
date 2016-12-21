@@ -48,9 +48,13 @@ class UserConnect extends Component {
   render() {
     return (
       <div className="user-connect">
-        <h2>
+        <h2 className="user-connect-title">
           Secret-in.me
+          <small>
+            Connect
+          </small>
         </h2>
+
         <Form
           className="user-connect-form"
           disabled={this.props.loading}

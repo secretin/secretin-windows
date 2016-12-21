@@ -26,11 +26,11 @@ function createWindow() {
   // Create the browser window.
   if (process.argv[2] === 'preLogon') {
     win = new BrowserWindow({
-      width: 800,
-      height: 600,
+      width: 360,
       frame: false,
       transparent: true,
       minimizable: false,
+      resizable: false,
       closable: false,
       alwaysOnTop: true,
     });
@@ -50,9 +50,13 @@ function createWindow() {
     });
   } else {
     win = new BrowserWindow({
-      backgroundColor: '#68bdf6',
-      width: 800,
-      height: 600,
+      width: 360,
+      frame: false,
+      transparent: true,
+      minimizable: false,
+      resizable: false,
+      closable: false,
+      alwaysOnTop: true,
     });
 
     ipcMain.on('changeClipboard', (event, arg) => { // prevent freeze in non-preLogon mode

@@ -59,7 +59,7 @@ class AppUIActions {
 
   generatePassword({ windowsSecretId, passwordsList }) {
     const newPassword = Secretin.Utils.PasswordGenerator.generatePassword({ length: 30 });
-    const newPasswordsList = passwordsList.push({ date: moment().format('DD/MM/YY HH:mm'), value: newPassword });
+    const newPasswordsList = passwordsList.push({ date: moment().format(), value: newPassword });
     secretin.editSecret(windowsSecretId, newPasswordsList.toJS())
       .then(() => this.generatePasswordSuccess({ passwordsList: newPasswordsList }))
       .catch(() => this.generatePasswordFailure());

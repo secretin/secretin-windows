@@ -41,6 +41,7 @@
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "^6.8.0",
+    "raw-loader": "0.5.1",
     "react-scripts": "^0.8.4"
   },
   "eslintConfig": {
