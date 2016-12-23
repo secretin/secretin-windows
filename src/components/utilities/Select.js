@@ -3,7 +3,7 @@ import Immutable from 'immutable';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
 
-import Icon from 'components/utilities/Icon';
+import Icon from './Icon';
 
 class Select extends Component {
   static propTypes = {
@@ -49,7 +49,7 @@ class Select extends Component {
     const className = classNames(
       'input',
       'input--type-select',
-      `input--size-${this.props.size}`
+      `input--size-${this.props.size}`,
     );
 
     return (
@@ -78,7 +78,7 @@ class Select extends Component {
               this.props.options.map(option =>
                 <option key={option[0]} value={option[0]}>
                   {option[1]}
-                </option>
+                </option>,
               )
             }
           </select>

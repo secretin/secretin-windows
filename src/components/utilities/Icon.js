@@ -27,7 +27,7 @@ class Icon extends Component {
       'icon',
       `icon--id-${id}`,
       `icon--size-${size}`,
-      this.props.className
+      this.props.className,
     );
 
     return (

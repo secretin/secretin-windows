@@ -27,6 +27,8 @@ function createWindow() {
   if (process.argv[2] === 'preLogon') {
     win = new BrowserWindow({
       width: 360,
+      x: 30,
+      y: 30,
       frame: false,
       transparent: true,
       minimizable: false,
@@ -48,15 +50,10 @@ function createWindow() {
       fakeClipboard = arg;
       event.returnValue = true;
     });
+    win.setMenu(null);
   } else {
     win = new BrowserWindow({
       width: 360,
-      frame: false,
-      transparent: true,
-      minimizable: false,
-      resizable: false,
-      closable: false,
-      alwaysOnTop: true,
     });
 
     ipcMain.on('changeClipboard', (event, arg) => { // prevent freeze in non-preLogon mode
@@ -64,7 +61,6 @@ function createWindow() {
       event.returnValue = true;
     });
   }
-  // win.setMenu(null);
 
   // and load the index.html of the app.
   win.loadURL(`file://${__dirname}/build/index.html`);

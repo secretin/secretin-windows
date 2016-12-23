@@ -84,40 +84,51 @@ class Layout extends Component {
 
         {
           this.state.windowsPassword ? (
-            <Select
-              label="Passwords"
-              value={this.state.windowsPassword}
-              options={
-                this.props.passwordsList.reverse().map(password => ([
-                  password.value,
-                  `${moment(password.date).format('dddd DD MMMM YYYY')}`,
-                ])).toList()
-              }
-              onChange={this.handleChange}
-              actions={
-                new Immutable.List([
-                  <a
-                    disabled={this.props.loading}
-                    onClick={() => AppUIActions.generatePassword({
-                      windowsSecretId: this.props.windowsSecretId,
-                      passwordsList: this.props.passwordsList,
-                    })}
-                  >
-                    Generate password
-                  </a>,
-                ])
-              }
-            />
+            <div>
+              <Select
+                label="Passwords"
+                value={this.state.windowsPassword}
+                options={
+                  this.props.passwordsList.reverse().map(password => ([
+                    password.value,
+                    `${moment(password.date).format('dddd DD MMMM YYYY')}`,
+                  ])).toList()
+                }
+                onChange={this.handleChange}
+                actions={
+                  new Immutable.List([
+                    <a
+                      disabled={this.props.loading}
+                      onClick={() => AppUIActions.generatePassword({
+                        windowsSecretId: this.props.windowsSecretId,
+                        passwordsList: this.props.passwordsList,
+                      })}
+                      tabIndex="-1"
+                    >
+                      Generate password
+                    </a>,
+                  ])
+                }
+              />
+              <Button
+                onClick={this.handleClick}
+                disabled={this.props.loading}
+              >
+                Copy
+              </Button>
+            </div>
           ) : (
-            'Generate your first password'
+            <Button
+              onClick={() => AppUIActions.generatePassword({
+                windowsSecretId: this.props.windowsSecretId,
+                passwordsList: this.props.passwordsList,
+              })}
+              disabled={this.props.loading}
+            >
+              Generate your first password
+            </Button>
           )
         }
-        <Button
-          onClick={this.handleClick}
-          disabled={this.props.loading}
-        >
-          Copy
-        </Button>
       </form>
     );
   }

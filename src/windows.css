@@ -11,8 +11,11 @@ html, body, .App {
   align-items: center;
 }
 
-.user-connect {
+.user-connect-title {
   -webkit-app-region: drag;
+}
+
+.user-connect {
   -webkit-user-select: none;
   flex: 0 0 auto;
   width: 100%;
