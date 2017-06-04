@@ -12,7 +12,7 @@ class Layout extends Component {
 
   static propTypes = {
     loading: PropTypes.bool,
-    passwordsList: PropTypes.instanceOf(Immutable.List),
+    data: PropTypes.instanceOf(Immutable.List),
     windowsSecretId: PropTypes.string,
   }
 
@@ -23,10 +23,11 @@ class Layout extends Component {
   }
 
   static getPropsFromStores() {
+    const { windowsSecretId, data, loading } = AppUIStore.getState();
     return {
-      passwordsList: AppUIStore.getPasswordsList(),
-      windowsSecretId: AppUIStore.getWindowsSecretId(),
-      loading: AppUIStore.getState().get('loading'),
+      windowsSecretId,
+      data,
+      loading,
     };
   }
 
@@ -35,39 +36,39 @@ class Layout extends Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    try {
-      this.state = {
-        windowsPassword: props.passwordsList.last().value,
-      };
-    } catch (e) {
-      this.state = {
-        windowsPassword: '',
-      };
-    }
+
+    this.state = {
+      windowsPassword: '',
+    };
+  }
+
+  componentDidMount() {
+    this.setDefaultPassword(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     if (!Immutable.is(nextProps, this.props)) {
-      try {
-        this.setState({
-          windowsPassword: nextProps.passwordsList.last().value,
-        });
-      } catch (e) {
-        this.setState({
-          windowsPassword: '',
-        });
-      }
+      this.setDefaultPassword(nextProps);
     }
   }
 
-  handleChange({ value }) {
+  setDefaultPassword(props) {
+    if (!props.data && !props.data.get('fields')) {
+      return;
+    }
+
+    const windowsPassword = props.data.get('fields').sortBy(field => field.date).reverse().first();
+    this.setState({ windowsPassword });
+  }
+
+  handleChange({ content }) {
     this.setState({
-      windowsPassword: value,
+      windowsPassword: content,
     });
   }
 
   handleClick() {
-    // copyToClipboard(this.props.value, { debug: true });
+    // copyToClipboard(this.props.content, { debug: true });
     // eslint-disable-next-line
     ipcRenderer.sendSync('changeClipboard', this.state.windowsPassword);
   }
@@ -89,10 +90,15 @@ class Layout extends Component {
                 label="Passwords"
                 value={this.state.windowsPassword}
                 options={
-                  this.props.passwordsList.reverse().map(password => ([
-                    password.value,
-                    `${moment(password.date).format('dddd DD MMMM YYYY')}`,
-                  ])).toList()
+                  this.props.data
+                    .get('fields')
+                    .sortBy(field => field.date)
+                    .reverse()
+                    .map(password => ([
+                      password.get('content'),
+                      moment(password.get('date')).format('dddd DD MMMM YYYY'),
+                    ]))
+                    .toList()
                 }
                 onChange={this.handleChange}
                 actions={
@@ -101,7 +107,7 @@ class Layout extends Component {
                       disabled={this.props.loading}
                       onClick={() => AppUIActions.generatePassword({
                         windowsSecretId: this.props.windowsSecretId,
-                        passwordsList: this.props.passwordsList,
+                        data: this.props.data,
                       })}
                       tabIndex="-1"
                     >
@@ -121,7 +127,7 @@ class Layout extends Component {
             <Button
               onClick={() => AppUIActions.generatePassword({
                 windowsSecretId: this.props.windowsSecretId,
-                passwordsList: this.props.passwordsList,
+                data: this.props.data,
               })}
               disabled={this.props.loading}
             >

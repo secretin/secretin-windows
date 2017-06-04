@@ -1,8 +1,13 @@
 import moment from 'moment';
+import Immutable from 'immutable';
 import Secretin, { Errors } from 'secretin';
 import alt from '../utils/alt';
 import secretin from '../utils/secretin';
 
+const DEFAULT_SECRET = new Immutable.Map({
+  type: 'windows',
+  fields: new Immutable.List([]),
+});
 
 class AppUIActions {
   constructor() {
@@ -26,7 +31,14 @@ class AppUIActions {
         });
         return secretin.getSecret(windowsSecretId);
       })
-      .then(passwordsList => this.loginUserSuccess({ windowsSecretId, passwordsList }))
+      .then((raw) => {
+        const data = (
+          raw.type ?
+            Immutable.fromJS(raw) :
+            DEFAULT_SECRET.set('fields', Immutable.fromJS(raw))
+        );
+        this.loginUserSuccess({ windowsSecretId, data });
+      })
       .catch((error) => {
         if (error instanceof Errors.UserNotFoundError) {
           return this.loginUserFailure({
@@ -46,10 +58,10 @@ class AppUIActions {
             error: { totp: 'Token' },
           });
         } else if (error instanceof Secretin.Errors.DontHaveSecretError) {
-          return secretin.addSecret('Windows', [], 'windows')
+          return secretin.addSecret('Windows', DEFAULT_SECRET, undefined, 'windows')
             .then(secretId => this.loginUserSuccess({
               windowsSecretId: secretId,
-              passwordsList: [],
+              data: DEFAULT_SECRET,
             }));
         }
         throw error;
@@ -57,11 +69,15 @@ class AppUIActions {
     return { username };
   }
 
-  generatePassword({ windowsSecretId, passwordsList }) {
+  generatePassword({ windowsSecretId, data }) {
     const newPassword = Secretin.Utils.PasswordGenerator.generatePassword({ length: 30 });
-    const newPasswordsList = passwordsList.push({ date: moment().format(), value: newPassword });
-    secretin.editSecret(windowsSecretId, newPasswordsList.toJS())
-      .then(() => this.generatePasswordSuccess({ passwordsList: newPasswordsList }))
+    const newData = data.update(
+      'fields',
+      fields => fields.push(new Immutable.Map({ date: moment().format(), content: newPassword })),
+    );
+
+    secretin.editSecret(windowsSecretId, newData)
+      .then(() => this.generatePasswordSuccess({ data: newData }))
       .catch(() => this.generatePasswordFailure());
     return { windowsSecretId };
   }
