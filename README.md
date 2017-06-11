@@ -1,8 +1,6 @@
 # secretin-windows
 Pre-login integration of secretin to protect your domaine password
 
-Waiting for official secretin-lib, you have to git clone https://github.com/secretin/secretin-lib (follow the building process) then link it `npm link` inside the secretin-lib directory.
-
 You'll need global packages react-scripts, eslint, electron, electron-packager
 
 Inside secretin-windows :
