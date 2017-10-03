@@ -9,7 +9,7 @@ const AppUIState = new Record({
   connected: false,
   errors: new Immutable.Map(),
   windowsSecretId: 'undefined',
-  passwordsList: new Immutable.List(),
+  data: null,
 });
 
 class AppUIStore {
@@ -27,14 +27,14 @@ class AppUIStore {
     );
   }
 
-  onLoginUserSuccess({ windowsSecretId, passwordsList }) {
+  onLoginUserSuccess({ windowsSecretId, data }) {
     this.setState(
       this.state.merge({
         loading: false,
         connected: true,
         errors: new Immutable.Map(),
         windowsSecretId,
-        passwordsList: new Immutable.List(passwordsList),
+        data,
       })
     );
   }
@@ -57,21 +57,13 @@ class AppUIStore {
     );
   }
 
-  onGeneratePasswordSuccess({ passwordsList }) {
+  onGeneratePasswordSuccess({ data }) {
     this.setState(
       this.state.merge({
         loading: false,
-        passwordsList,
+        data,
       })
     );
-  }
-
-  static getPasswordsList() {
-    return this.getState().get('passwordsList');
-  }
-
-  static getWindowsSecretId() {
-    return this.getState().get('windowsSecretId');
   }
 }
 
