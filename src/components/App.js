@@ -8,17 +8,20 @@ import UserConnect from '../components/UserConnect';
 import Layout from '../components/Layout';
 
 class App extends Component {
-
   static propTypes = {
     loading: PropTypes.bool,
     connected: PropTypes.bool,
     errors: PropTypes.instanceOf(Immutable.Map),
-  }
+  };
+
+  static defaultProps = {
+    loading: false,
+    connected: false,
+    errors: new Immutable.Map(),
+  };
 
   static getStores() {
-    return [
-      AppUIStore,
-    ];
+    return [AppUIStore];
   }
 
   static getPropsFromStores() {
@@ -33,16 +36,14 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {
-          this.props.connected ? (
-            <Layout />
-          ) : (
-            <UserConnect
-              loading={this.props.loading}
-              errors={this.props.errors}
-            />
-          )
-        }
+        {this.props.connected ? (
+          <Layout />
+        ) : (
+          <UserConnect
+            loading={this.props.loading}
+            errors={this.props.errors}
+          />
+        )}
       </div>
     );
   }

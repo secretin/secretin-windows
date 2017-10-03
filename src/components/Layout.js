@@ -9,17 +9,20 @@ import AppUIStore from '../stores/AppUIStore';
 import AppUIActions from '../actions/AppUIActions';
 
 class Layout extends Component {
-
   static propTypes = {
     loading: PropTypes.bool,
     passwordsList: PropTypes.instanceOf(Immutable.List),
     windowsSecretId: PropTypes.string,
-  }
+  };
+
+  static defaultProps = {
+    loading: false,
+    passwordsList: new Immutable.List(),
+    windowsSecretId: '',
+  };
 
   static getStores() {
-    return [
-      AppUIStore,
-    ];
+    return [AppUIStore];
   }
 
   static getPropsFromStores() {
@@ -77,58 +80,54 @@ class Layout extends Component {
       <form className="user-connect form">
         <h2 className="user-connect-title">
           Windows
-          <small>
-            Passwords
-          </small>
+          <small>Passwords</small>
         </h2>
 
-        {
-          this.state.windowsPassword ? (
-            <div>
-              <Select
-                label="Passwords"
-                value={this.state.windowsPassword}
-                options={
-                  this.props.passwordsList.reverse().map(password => ([
-                    password.value,
-                    `${moment(password.date).format('dddd DD MMMM YYYY')}`,
-                  ])).toList()
-                }
-                onChange={this.handleChange}
-                actions={
-                  new Immutable.List([
-                    <a
-                      disabled={this.props.loading}
-                      onClick={() => AppUIActions.generatePassword({
+        {this.state.windowsPassword ? (
+          <div>
+            <Select
+              label="Passwords"
+              value={this.state.windowsPassword}
+              options={this.props.passwordsList
+                .reverse()
+                .map(password => [
+                  password.value,
+                  `${moment(password.date).format('dddd DD MMMM YYYY')}`,
+                ])
+                .toList()}
+              onChange={this.handleChange}
+              actions={
+                new Immutable.List([
+                  <a
+                    disabled={this.props.loading}
+                    onClick={() =>
+                      AppUIActions.generatePassword({
                         windowsSecretId: this.props.windowsSecretId,
                         passwordsList: this.props.passwordsList,
                       })}
-                      tabIndex="-1"
-                    >
-                      Generate password
-                    </a>,
-                  ])
-                }
-              />
-              <Button
-                onClick={this.handleClick}
-                disabled={this.props.loading}
-              >
-                Copy
-              </Button>
-            </div>
-          ) : (
-            <Button
-              onClick={() => AppUIActions.generatePassword({
+                    tabIndex="-1"
+                  >
+                    Generate password
+                  </a>,
+                ])
+              }
+            />
+            <Button onClick={this.handleClick} disabled={this.props.loading}>
+              Copy
+            </Button>
+          </div>
+        ) : (
+          <Button
+            onClick={() =>
+              AppUIActions.generatePassword({
                 windowsSecretId: this.props.windowsSecretId,
                 passwordsList: this.props.passwordsList,
               })}
-              disabled={this.props.loading}
-            >
-              Generate your first password
-            </Button>
-          )
-        }
+            disabled={this.props.loading}
+          >
+            Generate your first password
+          </Button>
+        )}
       </form>
     );
   }

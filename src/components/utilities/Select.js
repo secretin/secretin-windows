@@ -13,23 +13,25 @@ class Select extends Component {
       PropTypes.node,
       PropTypes.string,
     ]),
-    value: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.number,
-    ]),
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     title: PropTypes.string,
     options: PropTypes.instanceOf(Immutable.List),
     onChange: PropTypes.func.isRequired,
     disabled: PropTypes.bool,
     size: PropTypes.string,
     actions: PropTypes.instanceOf(Immutable.List),
-  }
+  };
 
   static defaultProps = {
+    name: '',
+    label: '',
+    value: '',
+    title: '',
+    options: new Immutable.List(),
     disabled: false,
     size: 'base',
     actions: new Immutable.List(),
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -49,23 +51,19 @@ class Select extends Component {
     const className = classNames(
       'input',
       'input--type-select',
-      `input--size-${this.props.size}`,
+      `input--size-${this.props.size}`
     );
 
     return (
       <div className={className}>
-        {
-          this.props.label && (
-            <label htmlFor={this.id}>
-              {this.props.label}
-              {
-                this.props.actions.size > 0 && (
-                  <span className="input-label-actions">{this.props.actions}</span>
-                )
-              }
-            </label>
-          )
-        }
+        {this.props.label && (
+          <label htmlFor={this.id}>
+            {this.props.label}
+            {this.props.actions.size > 0 && (
+              <span className="input-label-actions">{this.props.actions}</span>
+            )}
+          </label>
+        )}
 
         <div className="input--type-select--input">
           <select
@@ -74,13 +72,11 @@ class Select extends Component {
             title={this.props.title}
             onChange={this.onChange}
           >
-            {
-              this.props.options.map(option =>
-                <option key={option[0]} value={option[0]}>
-                  {option[1]}
-                </option>,
-              )
-            }
+            {this.props.options.map(option => (
+              <option key={option[0]} value={option[0]}>
+                {option[1]}
+              </option>
+            ))}
           </select>
           <Icon id="arrow-down" />
         </div>

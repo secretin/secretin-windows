@@ -23,7 +23,7 @@ class AppUIStore {
     this.setState(
       this.state.merge({
         loading: true,
-      }),
+      })
     );
   }
 
@@ -35,7 +35,7 @@ class AppUIStore {
         errors: new Immutable.Map(),
         windowsSecretId,
         passwordsList: new Immutable.List(passwordsList),
-      }),
+      })
     );
   }
 
@@ -45,7 +45,7 @@ class AppUIStore {
         loading: false,
         connected: false,
         errors: new Immutable.Map(error),
-      }),
+      })
     );
   }
 
@@ -53,7 +53,7 @@ class AppUIStore {
     this.setState(
       this.state.merge({
         loading: true,
-      }),
+      })
     );
   }
 
@@ -62,7 +62,7 @@ class AppUIStore {
       this.state.merge({
         loading: false,
         passwordsList,
-      }),
+      })
     );
   }
 
@@ -75,7 +75,4 @@ class AppUIStore {
   }
 }
 
-export default alt.createStore(
-  makeImmutable(AppUIStore),
-  'AppUIStore',
-);
+export default alt.createStore(makeImmutable(AppUIStore), 'AppUIStore');

@@ -9,27 +9,26 @@ class Button extends Component {
     form: PropTypes.string,
     disabled: PropTypes.bool,
     size: PropTypes.string,
-    buttonStyle: PropTypes.oneOf([
-      'default',
-      'primary',
-      'icon',
-    ]),
+    buttonStyle: PropTypes.oneOf(['default', 'primary', 'icon']),
     onClick: PropTypes.func,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
       PropTypes.string,
     ]),
-  }
+  };
 
   static defaultProps = {
+    name: '',
+    title: '',
+    children: '',
     type: 'button',
     size: 'base',
     form: null,
     buttonStyle: 'primary',
     onClick: () => ({}),
     disabled: false,
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -47,7 +46,7 @@ class Button extends Component {
     const className = classNames(
       'button',
       `button--style-${this.props.buttonStyle}`,
-      `button--size-${this.props.size}`,
+      `button--size-${this.props.size}`
     );
 
     return (

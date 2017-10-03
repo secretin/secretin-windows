@@ -1,9 +1,22 @@
+const path = require('path');
+
 module.exports = {
   root: true,
 
   parser: 'babel-eslint',
 
-  extends: 'airbnb',
+  extends: [
+    'react-app',
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'prettier',
+    'prettier/flowtype',
+    'prettier/react',
+  ],
+
+  plugins: [
+    'prettier',
+  ],
 
   env: {
     browser: true,
@@ -14,9 +27,19 @@ module.exports = {
   },
 
   rules: {
-    'class-methods-use-this': 0,
-    'react/jsx-filename-extension': 0,
-    'import/no-unresolved': 0,
-    'import/no-extraneous-dependencies': 0,
+    'prettier/prettier': ['error', {
+      'printWidth': 80,
+      'singleQuote': true,
+      'trailingComma': 'es5',
+    }],
+
+    'import/no-named-default': 0, // travis don't like this rule
+  },
+
+  settings: {
+    'import/resolver': {
+      node: { paths: [path.resolve(__dirname, './src')] },
+      webpack: { config: 'node_modules/react-scripts/config/webpack.config.dev.js' },
+    },
   },
 };

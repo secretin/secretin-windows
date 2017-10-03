@@ -3,14 +3,13 @@ import Secretin, { Errors } from 'secretin';
 import alt from '../utils/alt';
 import secretin from '../utils/secretin';
 
-
 class AppUIActions {
   constructor() {
     this.generateActions(
       'loginUserSuccess',
       'loginUserFailure',
       'generatePasswordSuccess',
-      'generatePasswordFailure',
+      'generatePasswordFailure'
     );
   }
 
@@ -18,16 +17,18 @@ class AppUIActions {
     let windowsSecretId = 'undefined';
     secretin
       .loginUser(username, password, token)
-      .then((currentUser) => {
-        Object.keys(currentUser.metadatas).forEach((id) => {
+      .then(currentUser => {
+        Object.keys(currentUser.metadatas).forEach(id => {
           if (currentUser.metadatas[id].type === 'windows') {
             windowsSecretId = id;
           }
         });
         return secretin.getSecret(windowsSecretId);
       })
-      .then(passwordsList => this.loginUserSuccess({ windowsSecretId, passwordsList }))
-      .catch((error) => {
+      .then(passwordsList =>
+        this.loginUserSuccess({ windowsSecretId, passwordsList })
+      )
+      .catch(error => {
         if (error instanceof Errors.UserNotFoundError) {
           return this.loginUserFailure({
             error: { username: 'User not found' },
@@ -35,7 +36,11 @@ class AppUIActions {
         } else if (error instanceof Errors.InvalidPasswordError) {
           if (token) {
             return this.loginUserFailure({
-              error: { totp: 'Token', token: 'Invalid token' },
+              error: {
+                totp: 'Token',
+                password: 'Invalid password',
+                token: 'or invalid token',
+              },
             });
           }
           return this.loginUserFailure({
@@ -46,11 +51,14 @@ class AppUIActions {
             error: { totp: 'Token' },
           });
         } else if (error instanceof Secretin.Errors.DontHaveSecretError) {
-          return secretin.addSecret('Windows', [], 'windows')
-            .then(secretId => this.loginUserSuccess({
-              windowsSecretId: secretId,
-              passwordsList: [],
-            }));
+          return secretin
+            .addSecret('Windows', [], undefined, 'windows')
+            .then(secretId =>
+              this.loginUserSuccess({
+                windowsSecretId: secretId,
+                passwordsList: [],
+              })
+            );
         }
         throw error;
       });
@@ -58,10 +66,18 @@ class AppUIActions {
   }
 
   generatePassword({ windowsSecretId, passwordsList }) {
-    const newPassword = Secretin.Utils.PasswordGenerator.generatePassword({ length: 30 });
-    const newPasswordsList = passwordsList.push({ date: moment().format(), value: newPassword });
-    secretin.editSecret(windowsSecretId, newPasswordsList.toJS())
-      .then(() => this.generatePasswordSuccess({ passwordsList: newPasswordsList }))
+    const newPassword = Secretin.Utils.PasswordGenerator.generatePassword({
+      length: 30,
+    });
+    const newPasswordsList = passwordsList.push({
+      date: moment().format(),
+      value: newPassword,
+    });
+    secretin
+      .editSecret(windowsSecretId, newPasswordsList.toJS())
+      .then(() =>
+        this.generatePasswordSuccess({ passwordsList: newPasswordsList })
+      )
       .catch(() => this.generatePasswordFailure());
     return { windowsSecretId };
   }

@@ -7,18 +7,23 @@ class Form extends Component {
     id: PropTypes.string,
     className: PropTypes.string,
     disabled: PropTypes.bool,
+    autoComplete: PropTypes.bool,
     onSubmit: PropTypes.func,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,
       PropTypes.string,
     ]),
-  }
+  };
 
   static defaultProps = {
+    id: '',
+    className: '',
+    children: '',
     disabled: false,
+    autoComplete: false,
     onSubmit: () => ({}),
-  }
+  };
 
   constructor(props) {
     super(props);
@@ -36,17 +41,29 @@ class Form extends Component {
   }
 
   render() {
-    const className = classNames(
-      'form',
-      this.props.className,
-    );
+    const className = classNames('form', this.props.className);
 
     return (
       <form
         id={this.id}
         className={className}
         onSubmit={this.onSubmit}
+        autoComplete={this.props.autoComplete ? null : 'new-password'}
       >
+        {!this.props.autoComplete && [
+          <input
+            key="autofill_trap_email"
+            name="autofill_trap_email"
+            type="text"
+            style={{ display: 'none' }}
+          />,
+          <input
+            key="autofill_trap_password"
+            name="autofill_trap_password"
+            type="password"
+            style={{ display: 'none' }}
+          />,
+        ]}
         <input type="submit" style={{ display: 'none' }} />
         {this.props.children}
       </form>

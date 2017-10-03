@@ -9,11 +9,15 @@ import Input from '../components/utilities/Input';
 import Button from '../components/utilities/Button';
 
 class UserConnect extends Component {
-
   static propTypes = {
     loading: PropTypes.bool,
     errors: PropTypes.instanceOf(Immutable.Map),
-  }
+  };
+
+  static defaultProps = {
+    loading: false,
+    errors: new Immutable.Map(),
+  };
 
   constructor(props) {
     super(props);
@@ -50,9 +54,7 @@ class UserConnect extends Component {
       <div className="user-connect">
         <h2 className="user-connect-title">
           Secret-in.me
-          <small>
-            Connect
-          </small>
+          <small>Connect</small>
         </h2>
 
         <Form
@@ -69,6 +71,7 @@ class UserConnect extends Component {
             disabled={this.props.loading}
             error={this.props.errors.get('username')}
             autoFocus
+            autoComplete
           />
           <Input
             name="password"
@@ -79,19 +82,18 @@ class UserConnect extends Component {
             disabled={this.props.loading}
             error={this.props.errors.get('password')}
           />
-          {
-            this.props.errors.get('totp') &&
-              <Input
-                name="token"
-                label="Token"
-                type="text"
-                value={this.state.token}
-                onChange={this.handleChange}
-                disabled={this.props.loading}
-                error={this.props.errors.get('token')}
-                autoFocus
-              />
-          }
+          {this.props.errors.get('totp') && (
+            <Input
+              name="token"
+              label="Token"
+              type="text"
+              value={this.state.token}
+              onChange={this.handleChange}
+              disabled={this.props.loading}
+              error={this.props.errors.get('token')}
+              autoFocus
+            />
+          )}
 
           <Button
             type="submit"

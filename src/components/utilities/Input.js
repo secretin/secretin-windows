@@ -3,6 +3,9 @@ import Immutable from 'immutable';
 import { uniqueId } from 'lodash';
 import classNames from 'classnames';
 
+import Icon from './Icon';
+import Button from './Button';
+
 class Input extends Component {
   static propTypes = {
     name: PropTypes.string.isRequired,
@@ -21,29 +24,35 @@ class Input extends Component {
 
     autoFocus: PropTypes.bool,
     autoSelect: PropTypes.bool,
+    autoComplete: PropTypes.bool,
     disabled: PropTypes.bool,
     readOnly: PropTypes.bool,
     actions: PropTypes.instanceOf(Immutable.List),
     size: PropTypes.string,
-  }
+  };
 
   static defaultProps = {
     type: 'text',
+    label: '',
     value: '',
+    title: '',
+    placeholder: '',
+    error: '',
     autoFocus: false,
     autoSelect: false,
+    autoComplete: false,
     disabled: false,
     readOnly: false,
     actions: new Immutable.List(),
     size: 'base',
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.onChange = this.onChange.bind(this);
     this.onTogglePasswordShow = this.onTogglePasswordShow.bind(this);
-    this.id = uniqueId('input_');
+    this.id = uniqueId(`${this.props.name}_input_`);
     this.state = {
       showPassword: false,
     };
@@ -51,10 +60,7 @@ class Input extends Component {
 
   componentDidMount() {
     if (this.props.autoSelect) {
-      setTimeout(
-        () => this.input.select(),
-        0,
-      );
+      setTimeout(() => this.input.select(), 0);
     }
   }
 
@@ -71,6 +77,10 @@ class Input extends Component {
     });
   }
 
+  select() {
+    this.input.select();
+  }
+
   render() {
     const className = classNames(
       'input',
@@ -78,58 +88,60 @@ class Input extends Component {
       `input--size-${this.props.size}`,
       {
         'input--error': this.props.error,
-      },
+      }
     );
 
-    let actions = this.props.actions;
-    if (this.props.type === 'password') {
-      actions = actions.unshift(
-        <a
-          key="show"
-          onClick={this.onTogglePasswordShow}
-          tabIndex="-1"
-        >
-          {this.state.showPassword ? 'Hide' : 'Show'}
-        </a>,
-      );
-    }
+    const actions = this.props.actions;
 
     return (
       <div className={className}>
-        {
-          this.props.label && (
-            <label htmlFor={this.id}>
-              {this.props.label}
-              {
-                actions.size > 0 && (
-                  <span className="input-label-actions">{actions}</span>
-                )
-              }
-            </label>
-          )
-        }
+        {this.props.label && (
+          <label htmlFor={this.id}>
+            {this.props.label}
+            {actions.size > 0 && (
+              <span className="input-label-actions">{actions}</span>
+            )}
+          </label>
+        )}
 
         <input
           id={this.id}
-          ref={(input) => { this.input = input; }}
-          name={this.props.name}
+          ref={input => {
+            this.input = input;
+          }}
+          name={this.id}
           title={this.props.title}
-          type={this.props.type === 'password' && this.state.showPassword ? 'text' : this.props.type}
+          type={
+            this.props.type === 'password' && this.state.showPassword
+              ? 'text'
+              : this.props.type
+          }
           value={this.props.value}
           onChange={this.onChange}
           placeholder={this.props.placeholder}
-
+          autoComplete={this.props.autoComplete ? null : 'new-password'}
           autoFocus={this.props.autoFocus}
           disabled={this.props.disabled}
           readOnly={this.props.readOnly}
         />
-        {
-          this.props.error && (
-            <span className="input-error">
-              { this.props.error }
-            </span>
-          )
-        }
+        {this.props.type === 'password' && (
+          <div className="input--password-show">
+            <Button
+              title="Show"
+              buttonStyle="icon"
+              onClick={this.onTogglePasswordShow}
+              tabIndex="-1"
+            >
+              <Icon
+                id={this.state.showPassword ? 'show' : 'hide'}
+                size="small"
+              />
+            </Button>
+          </div>
+        )}
+        {this.props.error && (
+          <span className="input-error">{this.props.error}</span>
+        )}
       </div>
     );
   }
